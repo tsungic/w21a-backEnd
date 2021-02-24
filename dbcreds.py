@@ -1,5 +1,5 @@
 host = "35.188.167.76"
 port = 3000
-user = "InnoDB"
+user = "innotech"
 password = "1029tfds"
 database = "simple_blog"

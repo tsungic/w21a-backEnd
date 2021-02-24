@@ -1,8 +1,9 @@
 from flask import Flask, request, Response
+from flask_cors import CORS
 import dbcreds
 import mariadb
 import json
-from flask_cors import CORS
+
 
 app = Flask(__name__)
 CORS(app)
@@ -57,7 +58,7 @@ def posts():
         results = cursor.fetchall()
         posts=[]
         for item in results:
-            post={ "id" : item[0] , "contents" : item[1]}
+            post={ "id" : item[0] , "content" : item[1]}
             posts.append(post)
         return Response(json.dumps(posts, default = str), mimetype ="application/json", status = 200)
 
@@ -77,26 +78,25 @@ def posts():
         )
         cursor = conn.cursor()
 
-        cursor.execute("UPDATE posts SET content=? WHERE id = ?", [post.get("id"), post.get("content")])
+        cursor.execute("UPDATE posts SET content='?' WHERE id = ?", [post.get("id"), post.get("content")])
         conn.commit()
 
         success = cursor.rowcount
-
         if cursor !=None:
             cursor.close()
         if conn !=None:
             conn.close
-            if(success):
-                return Response(
-                    "The post was updated",
-                    mimetype="application/json",
-                    status=200
-                )
+        if(success):
             return Response(
-                "failed",
-                mimetype=""
-                
+                "The post was updated",
+                mimetype="application/json",
+                status=200
             )
+        return Response(
+            "failed",
+            mimetype=""
+                
+        )
     
     
     elif request.method == 'DELETE':
@@ -111,7 +111,7 @@ def posts():
         )
         cursor = conn.cursor()
 
-        cursor.execute("DELETE from posts WHERE id = ?", [post.get("id")])
+        cursor.execute("DELETE from posts WHERE id = '?'", [post.get("id")])
         conn.commit()
 
         success = cursor.rowcount
